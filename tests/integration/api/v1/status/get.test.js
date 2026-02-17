@@ -1,7 +1,13 @@
 test("GET to /api/v1/status should return 200 and status ok", async () => {
-  const res = await fetch("http://localhost:3000/api/v1/status");
-  const data = await res.json();
+  const response = await fetch("http://localhost:3000/api/v1/status");
+  expect(response.status).toBe(200);
 
-  expect(res.status).toBe(200);
-  expect(data).toEqual({ message: "My api next.js, uhuuuu!!!" });
+  const respondeBody = await response.json();
+
+  const parsedUpdatedAt = new Date(respondeBody.update_at).toISOString();
+  expect(respondeBody.update_at).toEqual(parsedUpdatedAt);
+
+  expect(respondeBody.dependencies.database.version).toEqual("16.0");
+  expect(respondeBody.dependencies.database.max_connections).toEqual(100);
+  expect(respondeBody.dependencies.database.opened_connections).toEqual(1);
 });
